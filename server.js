@@ -8,6 +8,8 @@ const config = require('./config/secret');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const falsh = require('express-flash');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
 
 
 const app = express();
@@ -33,10 +35,15 @@ app.use(session({
 	store: new MongoStore({ url: config.database, autoReconnect: true })
 }))
 app.use(falsh());
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 
 //mongodb://<dbuser>:<dbpassword>@ds233551.mlab.com:33551/sanjeevtwitter
 const mainRoutes = require('./routes/main');
+const userRoutes = require('./routes/user');
 app.use(mainRoutes);
+app.use(userRoutes);
 
 app.listen(3030, (err) => {
 	if(err) {
