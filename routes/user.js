@@ -11,7 +11,7 @@ router.route('/signup')
 		User.findOne({ email: req.body.email }, function(err, existingUser) {
 			if(existingUser) {
 				req.flash('errors', 'Account with email address alreay exists');
-				req.redirect('/signup');
+				res.redirect('/signup');
 			} else {
 				var user = new User();
 				user.name = req.body.name;
