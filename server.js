@@ -39,6 +39,12 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(function(req, res, next) {
+	res.locals.user = req.user;
+	next();
+});
+
+
 //mongodb://<dbuser>:<dbpassword>@ds233551.mlab.com:33551/sanjeevtwitter
 const mainRoutes = require('./routes/main');
 const userRoutes = require('./routes/user');

@@ -28,5 +28,27 @@ router.route('/signup')
 		});
 	});
 
+router.route('/login')
+	.get((req, res, next) => {
+		if(req.user) res.redirect('/home');
+		res.render('accounts/login', { message: req.flash('loginMessage')});
+	})  
+	.post(passport.authenticate('local-login', {
+		successRedirect: '/',
+		failureRedirect: '/login',
+		failureFlash: true
+	})); 
+
+router.get('/logout', (req, res, next) => {
+	req.logout();
+	res.redirect('/');
+});
+
 
 module.exports = router;
+
+
+
+
+
+
