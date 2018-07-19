@@ -9,6 +9,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const falsh = require('express-flash');
 const passport = require('passport');
+const passportSocketIo = require('passport.socketio'); 
 const cookieParser = require('cookie-parser');
 
 
@@ -16,7 +17,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-
+const sessionStore = new MongoStore({ url: config.database, autoReconnect: true });
 mongoose.connect(config.database, {useNewUrlParser: true }, function(err){
 	if(err) {
 		console.log(err);
@@ -35,7 +36,7 @@ app.use(session({
 	resave: true,
 	saveUninitialized: true,
 	secret: config.secret,
-	store: new MongoStore({ url: config.database, autoReconnect: true })
+	store: sessionStore
 }))
 app.use(falsh());
 app.use(cookieParser());
@@ -46,6 +47,27 @@ app.use(function(req, res, next) {
 	res.locals.user = req.user;
 	next();
 });
+
+
+io.use(passportSocketIo.authorize({
+	cookieParser: cookieParser,
+	key: 'connect.sid',
+	secret: config.secret,
+	store: sessionStore,
+	success: onAuthorizeSuccess,
+	fail: onAuthorizeFail
+}));
+
+function onAuthorizeSuccess(data, accept) {
+  console.log("successful connection");
+  accept();
+}
+
+function onAuthorizeFail(data, message, error, accept) {
+  console.log("failed connection");
+  if (error) accept(new Error(message));
+}
+
 
 require('./realtime/io')(io);
 
