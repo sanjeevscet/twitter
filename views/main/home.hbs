@@ -15,15 +15,17 @@
 
 
 	<div id="tweets">
+		{{#each tweets}}
 		<div class="media">
 			<div class="media-left">
-				<a herf="#"><img class="media-object" src="{{ user.photo }}"></a>
+				<a herf="#"><img class="media-object" src="{{ owner.photo }}"></a>
 			</div>
 			<div class="media-body">
-				<h4 class="media-heading">{{ user.name }}</h4>
-				<p> Hello! My name is Sanjeev</p>
+				<h4 class="media-heading">{{ owner.name }}</h4> 
+				<p>{{ content }}</p>
 			</div>
 		</div>
+		{{/each}}
 	</div>
 
 </div>
